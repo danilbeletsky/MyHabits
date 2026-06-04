@@ -30,29 +30,34 @@
 
 ```
 MyHabits/
-├── MyHabits.xcodeproj      # Проект Xcode
+├── MyHabits.xcodeproj          # Проект Xcode
 └── MyHabits/
     ├── MyHabitsApp.swift       # Точка входа приложения
-    ├── AppNavigationView.swift # Корневой NavigationStack
-    ├── Coordinator.swift       # Навигация и колбэк добавления
-    ├── MainScreen.swift        # Список привычек
-    ├── AddHabitScreen.swift    # Форма добавления
-    ├── SelectedScreen.swift    # Маршруты навигации
-    ├── Cells.swift             # Модель привычки
+    ├── Screen/                 # Экраны и корневая навигация
+    │   ├── AppNavigationView.swift
+    │   ├── MainScreen.swift
+    │   └── AddHabitScreen.swift
+    ├── Coordinator/            # Навигация и колбэки
+    │   └── Coordinator.swift
+    ├── Service/                # Маршруты навигации
+    │   └── SelectedScreen.swift
+    ├── Cells/                  # Модели данных
+    │   └── Cells.swift
     └── Assets.xcassets         # Иконка и цвета
 ```
 
 ## Архитектура
 
-| Компонент | Назначение |
-|-----------|------------|
-| `Coordinator` | `@Observable` класс: `NavigationPath`, переходы `goTo` / `back`, колбэк `addHabit` |
-| `SelectedScreen` | Enum маршрутов: главный экран и экран добавления |
-| `Cells` | Модель привычки: `id`, `title`, `isCompletion` |
-| `MainScreen` | `List` с привычками и кнопкой «Добавить» в toolbar |
-| `AddHabitScreen` | `TextField`, кнопки «Добавить» и «Отменить» |
+| Компонент | Путь | Назначение |
+|-----------|------|------------|
+| `AppNavigationView` | `Screen/` | Корневой `NavigationStack`, `environment(coordinator)` |
+| `MainScreen` | `Screen/` | `List` с привычками, переключение выполнения, кнопка «Добавить» |
+| `AddHabitScreen` | `Screen/` | `TextField`, кнопки «Добавить» и «Отменить» |
+| `Coordinator` | `Coordinator/` | `@Observable` класс: `NavigationPath`, `goTo` / `back`, колбэк `addHabit` |
+| `SelectedScreen` | `Service/` | Enum маршрутов: главный экран и экран добавления |
+| `Cells` | `Cells/` | Модель привычки: `id`, `title`, `isCompletion` |
 
-Навигация построена на **Coordinator** + `navigationDestination(for: SelectedScreen.self)`. Состояние списка привычек живёт в `@State` на `MainScreen`.
+Навигация построена на **Coordinator** + `navigationDestination(for: SelectedScreen.self)`. Состояние списка привычек живёт в `@State` на `MainScreen`; при переходе на экран добавления координатор получает колбэк `addHabit`, который дописывает новую запись в массив.
 
 ## Технологии
 
